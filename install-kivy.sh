@@ -186,6 +186,7 @@ echo 'SUBSYSTEM=="input", KERNEL=="event[0-9]*", GROUP="users"' > /etc/udev/rule
 usermod -a -G video sysop
 usermod -a -G audio sysop
 usermod -a -G users sysop
+usermod -a -G input sysop
 
 echo "Setup input device for regular keyboard and mouse"
 sysopdir=/home/sysop
@@ -207,6 +208,9 @@ echo "touchring = scale=0.3,alpha=0.7,show_cursor=1" >> $kivini
 # Allow kivy apps to be run as root
 mkdir -p /root/.kivy
 cp -fv /home/sysop/.kivy/config.ini /root/.kivy
+
+# Many kivy apps expect a .config home directory
+mkdir -p /home/sysop/.config
 
 # Explain what we built to the logs
 echo "Kivy version built:"
@@ -264,7 +268,6 @@ uname -a
 # Fix regular user permissions
 echo "Setting permissions for all sysop home dir user files"
 chown -R 1000:1000 $sysopdir
-usermod -aG input sysop
 ls -auxlh $sysopdir
 
 echo "Adding local binary path to regular user"
