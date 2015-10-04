@@ -33,7 +33,7 @@ import sys
 import time
 
 # Release version of KivyPie
-__version__='0.5'
+__version__='0.6'
 
 # Kivy source release branch to build - latest as of today: 1.9.0
 __kivy_github_version__='master'
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # (See the file xsysroot.conf for details)
     xsysroot_profile_name='kivypie'
 
-    # --dry-run will not install any software, but expand the image
+    # --prepare-only will not install any software, but expand the image
     if len(sys.argv) > 1:
         if sys.argv[1] == '--prepare-only':
             prepare_only=True
@@ -103,6 +103,14 @@ if __name__ == '__main__':
     # renew the image so we start from scratch
     if not kivypie.renew():
         sys.exit(1)
+    else:
+        # once renewed, expand it to grow in size
+        kivypie.umount()
+        if not kivypie.expand():
+            print 'error expanding image size to {}'.format(kivypie.query('qcow_size'))
+            sys.exit(1)
+        else:
+            kivypie.mount()
 
     if not prepare_only:
 

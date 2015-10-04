@@ -7,6 +7,8 @@ It should be straight forward to use a Raspbian too.
 
 PipaOS is available at http://pipaos.mitako.eu/
 
+The latest features on Kivy 1.9 are [detailed here](http://kivy.org/planet/2015/04/kivy-1-9%C2%A0released/).
+
 ### Requirements and preparation
 
 A Linux, i686 based system with `nbd` support in the kernel. Debian is tested to run smoothly.
