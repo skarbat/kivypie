@@ -48,6 +48,7 @@
 gpu_mem=128
 
 # Uncomment this line to set the HDMI as the primary display
+# You might need this flag if using RaspberryPI touch screen
 #display_default_lcd=0
 
 # for more options see http://elinux.org/RPi_config.txt
