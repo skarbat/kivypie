@@ -115,38 +115,36 @@ if __name__ == '__main__':
     if not prepare_only:
 
         # baptize the kivypie version
-        kivypie_version_file='/etc/kivypie_version'
-        kivypie.execute('/bin/bash -c "printf \'{}\n\' > {}"'.format(__version__, kivypie_version_file))
+        kivypie.edfile('/etc/kivypie_version', 'kivypie v{} - {}'.format(__version__, time.ctime()))
 
         # set the system hostname
-        kivypie_hostname_file='/etc/hostname'
-        kivypie.execute('/bin/bash -c "printf \'{}\n\' > {}"'.format('kivypie', kivypie_hostname_file))
-
+        kivypie_hostname='kivypie'
         kivypie_hosts_file='/etc/hosts'
-        kivypie.execute('/bin/bash -c "printf \'{}\n\' >  {}"'.format('127.0.0.1 localhost', kivypie_hosts_file))
-        kivypie.execute('/bin/bash -c "printf \'{}\n\' >> {}"'.format('127.0.0.1 kivypie', kivypie_hosts_file))
+        kivypie.edfile('/etc/hostname', kivypie_hostname)
+        kivypie.edfile(kivypie_hosts_file, '127.0.0.1 localhost')
+        kivypie.edfile(kivypie_hosts_file, '127.0.0.1 {}'.format(kivypie_hostname), append=True)
 
         # firmware config.txt contains special settings to make Kivy run smoother
         src_config_txt='config.txt'
         dst_config_txt=os.path.join(kivypie.query('sysboot'), src_config_txt)
-        print 'Copying firmware config file {} -> {}'.format(src_config_txt, dst_config_txt)
-        rc=os.system('sudo cp {} {}'.format(src_config_txt, dst_config_txt))
+        rc=os.system('sudo cp -fv {} {}'.format(src_config_txt, dst_config_txt))
         if rc:
             print 'WARNING: could not copy config.txt rc={}'.format(rc)
+
+        # Copy kivypie readme file to user home directory
+        rc=os.system('sudo cp -fv {} {}'.format('README-kivypie', kivypie.query('sysboot')))
+        rc=os.system('sudo cp -fv {} {}'.format('LICENSE', os.path.join(kivypie.query('sysboot'), 'LICENSE-kivypie')))
 
         # make the KivyPie installation script available in the image through /tmp
         src_install_script='install-kivy.sh'
         dst_install_script=os.path.join(kivypie.query('tmp'), src_install_script)
-        print 'Copying kivy install script {} -> {}'.format(src_install_script, dst_install_script)
+        print 'Copying kivy installation script {} -> {}'.format(src_install_script, dst_install_script)
         rc=os.system('cp {} {}'.format(src_install_script, dst_install_script))
 
         # run the KivyPie build and installation script
         rc=kivypie.execute('/bin/bash -c "cd /tmp ; ./{} {}"'.format(src_install_script, __kivy_github_version__))
         if rc:
-            print 'ERROR: installation script reported problems rc={}'.format(rc)
-
-        # Add the Opengl libraries to the system paths
-        rc=kivypie.execute('ldconfig /opt/vc/lib')
+            print 'ERROR: kivy installation script reported problems rc={}'.format(rc)
 
         # unmount the image
         if not kivypie.umount():

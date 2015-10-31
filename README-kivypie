@@ -1,0 +1,17 @@
+Welcome to KivyPie
+=================
+
+KivyPie is a compact Raspbian derivative with the Kivy framework installed.
+
+You can find all the examples from the Kivy public repository
+on the directory /usr/local/share/kivy-examples.
+
+For latest KivyPie version and updates, visit http://kivypie.mitako.eu
+
+There is a discussion group at https://groups.google.com/d/forum/kivypie
+
+or email kivypie@mitako.eu
+
+Enjoy!
+
+Albert Casals, 2013-2015 - http://mitako.eu
