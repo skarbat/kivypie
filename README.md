@@ -12,7 +12,7 @@ The latest features on Kivy 1.9 are [detailed here](http://kivy.org/planet/2015/
 ### Requirements and preparation
 
 A Linux, i686 based system with `nbd` support in the kernel. Debian is tested to run smoothly.
-Download `xsysroot` somewhere on your path, and create a python symbolic link:
+Download [xsysroot](https://github.com/skarbat/xsysroot) somewhere on your path, and create a python symbolic link:
 
 ```
 $ curl https://raw.githubusercontent.com/skarbat/xsysroot/master/xsysroot > ~/bin/xsysroot
