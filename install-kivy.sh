@@ -159,18 +159,20 @@ echo "Setup input device for regular keyboard and mouse"
 sysopdir=/home/sysop
 kivdir=$sysopdir/.kivy
 kivini=$kivdir/config.ini
-mkdir $kivdir
-echo "[input]" > $kivini
-echo "mouse = mouse" >> $kivini
-echo "device_%(name)s = probesysfs,provider=mtdev" >> $kivini
-echo "%(name)s = probesysfs,provider=mtdev" >> $kivini
-echo "%(name)s = probesysfs,provider=hidinput" >> $kivini
-echo "acert230h = mtdev,/dev/input/event0" >> $kivini
-echo "mtdev_%(name)s = probesysfs,provider=mtdev" >> $kivini
-echo "hid_%(name)s = probesysfs,provider=hidinput" >> $kivini
+mkdir -p $kivdir
 
-echo "[modules]" >> $kivini
-echo "touchring = scale=0.3,alpha=0.7,show_cursor=1" >> $kivini
+
+# Create kivy configuration file
+cat <<EOF > $kivini
+[input]
+mouse = mouse
+mtdev_%(name)s = probesysfs,provider=mtdev
+hid_%(name)s = probesysfs,provider=hidinput
+
+[modules]
+touchring = scale=0.3,alpha=0.7,show_cursor=1
+EOF
+
 
 # Allow kivy apps to be run as root
 mkdir -p /root/.kivy
@@ -192,6 +194,17 @@ wget -q https://github.com/kivy/kivy/archive/1.9.0.zip -O $kivyzip
 echo "Get latest kivy documentation in PDF"
 kivypdf=$sysopdir/kivy-documentation.pdf
 wget -q http://kivy.org/docs/pdf/Kivy-latest.pdf -O $kivypdf
+
+#
+# Install kivy designer
+#
+cd /home/sysop
+curl -L -k https://github.com/kivy/kivy-designer/archive/master.zip > kivy_designer_master.zip
+unzip -o kivy_designer_master.zip
+rm kivy_designer_master.zip
+cd kivy-designer-master
+pip install -r requirements.txt
+garden install filebrowser
 
 #
 # Clone sample projects and demos included in KivyPie
@@ -220,7 +233,6 @@ curl -L -k https://github.com/inclement/kivycrashcourse/archive/master.tar.gz | 
 
 # make it easier to reach the amazing examples :)
 sudo ln -s /usr/local/share/kivy-examples/ /home/sysop/kivy-examples
-
 
 # Fix user permissions to all downloaded stuff
 echo "Setting permissions for all sysop home dir user files"

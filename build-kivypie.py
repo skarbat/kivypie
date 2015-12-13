@@ -33,7 +33,7 @@ import sys
 import time
 
 # Release version of KivyPie
-__version__='0.6'
+__version__='0.7'
 
 # Kivy source release branch to build - latest as of today: 1.9.0
 __kivy_github_version__='master'
