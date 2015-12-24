@@ -37,15 +37,10 @@ The build process is separated in 2 parts.
  * `build-kivypie.py` is responsible for preparing the OS, install Kivy, and give you a bootable image
  * `install-kivy.sh` The KivyPie build and installation script
 
-Execute this command to install KivyPie on tiop of pipaOS:
-
-```
-$ python -u build-kivypie.py --build-all > build.log 2>&1
-```
-
-Follow the progress via the logfile with `tail -f build.log`.
+Execute `build.sh` to build KivyPie from scratch. Follow the progress via the logfile with `tail -f build.log`.
 
 You could actually run `install-kivy.sh` directly on the RaspberryPI and it should install Kivy as well.
+Make sure you do `sudo umount /tmp` to use the full sd card available space to build all sources.
 
 The latest version of KivyPie and additional info can be found at http://kivypie.mitako.eu
 

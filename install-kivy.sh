@@ -76,6 +76,7 @@ libssl1.0.0 libsmbclient libssh-4
 python-rpi.gpio python3-rpi.gpio raspi-gpio wiringpi
 libraspberrypi-dev wget
 libvncserver-dev
+python-beautifulsoup
 "
 
 echo "KivyPie build process starts at: `date`"
@@ -114,12 +115,15 @@ pip install cython==0.21.2
 echo "Installing pygments"
 pip install pygments
 
-# Build and install Kivy!
+echo "Building Kivy!"
 cd /tmp/$kivy_dirname
 python setup.py install
 cd ..
 rm -rf $kivy_dirname
 ln -s /usr/bin/python2.7 /usr/bin/kivy
+
+echo "Installing kivy garden"
+pip install kivy-garden
 
 
 # Build screnshot tool
@@ -155,54 +159,52 @@ rm dispmanx_vnc.zip
 #
 # System tweaks to make Kivy play well
 #
+username="sysop"
 echo "Setup input device for regular keyboard and mouse"
-sysopdir=/home/sysop
-kivdir=$sysopdir/.kivy
+usernamedir="/home/$username"
+kivdir=$usernamedir/.kivy
 kivini=$kivdir/config.ini
 mkdir $kivdir
-echo "[input]" > $kivini
-echo "mouse = mouse" >> $kivini
-echo "device_%(name)s = probesysfs,provider=mtdev" >> $kivini
-echo "%(name)s = probesysfs,provider=mtdev" >> $kivini
-echo "%(name)s = probesysfs,provider=hidinput" >> $kivini
-echo "acert230h = mtdev,/dev/input/event0" >> $kivini
-echo "mtdev_%(name)s = probesysfs,provider=mtdev" >> $kivini
-echo "hid_%(name)s = probesysfs,provider=hidinput" >> $kivini
 
-echo "[modules]" >> $kivini
-echo "touchring = scale=0.3,alpha=0.7,show_cursor=1" >> $kivini
+# Create kivy configuration file
+cat <<EOF > $kivini
+[input]
+mouse = mouse
+mtdev_%(name)s = probesysfs,provider=mtdev
+hid_%(name)s = probesysfs,provider=hidinput
+
+[modules]
+touchring = scale=0.3,alpha=0.7,show_cursor=1
+EOF
 
 # Allow kivy apps to be run as root
 mkdir -p /root/.kivy
-cp -fv /home/sysop/.kivy/config.ini /root/.kivy
+cp -fv /home/$username/.kivy/config.ini /root/.kivy
 
 # Many kivy apps expect a .config home directory
-mkdir -p /home/sysop/.config
+mkdir -p /home/$username/.config
 
 # Explain what we built to the logs
 echo "Kivy version built:"
 echo "import kivy; print kivy.__version__" | python -
 
-
-echo "Get the latest kivy source code for later builds"
-kivyzip=$sysopdir/kivy-1.9.0.zip
-cd /tmp
-wget -q https://github.com/kivy/kivy/archive/1.9.0.zip -O $kivyzip
+echo "Copying Kivy sources used to build this version"
+cp -fv ${kivy_source_zip}.zip $usernamedir
 
 echo "Get latest kivy documentation in PDF"
-kivypdf=$sysopdir/kivy-documentation.pdf
+kivypdf=$usernamedir/kivy-documentation.pdf
 wget -q http://kivy.org/docs/pdf/Kivy-latest.pdf -O $kivypdf
 
 #
 # Clone sample projects and demos included in KivyPie
 #
-cd /home/sysop
+cd /home/$username
 
 # sample 1: mesh objects
-readmefile=/home/sysop/mesh-manipulation/README.txt
-mkdir -p /home/sysop/mesh-manipulation
-curl -L -k https://raw.githubusercontent.com/kivy/kivy/master/examples/canvas/mesh_manipulation.py > /home/sysop/mesh-manipulation/mesh_manipulation.py
-echo "Mesh manipulation from Gabriel Pettier" > $readmefile
+readmefile=/home/$username/mesh-manipulation/README.txt
+mkdir -p /home/$username/mesh-manipulation
+curl -L -k https://raw.githubusercontent.com/kivy/kivy/master/examples/canvas/mesh_manipulation.py > /home/$username/mesh-manipulation/mesh_manipulation.py
+echo "Sample 1: Mesh manipulation" > $readmefile
 echo "  http://blog.tshirtman.fr/2014/1/29/kivy-image-manipulations-with-mesh-and-textures" >> $readmefile
 
 echo "sample 2: flappykivy game"
@@ -218,14 +220,18 @@ curl -L -k https://github.com/nskrypnik/kivy-3dpicking/archive/master.tar.gz | t
 echo "sample 5: Kivy tutorial sources from Alexander Taylor"
 curl -L -k https://github.com/inclement/kivycrashcourse/archive/master.tar.gz | tar zxf -
 
+# http://inclem.net/pages/kivy-crash-course/
+echo "sample 6: elUruguayo"
+curl -L -k https://github.com/elParaguayo/RPi-InfoScreen-Kivy/archive/master.tar.gz | tar zxf -
+
 # make it easier to reach the amazing examples :)
-sudo ln -s /usr/local/share/kivy-examples/ /home/sysop/kivy-examples
+sudo ln -s /usr/local/share/kivy-examples/ /home/$username/kivy-examples
 
 
 # Fix user permissions to all downloaded stuff
-echo "Setting permissions for all sysop home dir user files"
-chown -R 1000:1000 $sysopdir
-ls -auxlh $sysopdir
+echo "Setting permissions for all $username home dir user files"
+chown -R $username:$username $usernamedir
+ls -auxlh $usernamedir
 
 # Change the message of the day
 echo "Welcome to KivyPie" > /etc/motd

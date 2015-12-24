@@ -33,7 +33,7 @@ import sys
 import time
 
 # Release version of KivyPie
-__version__='0.6'
+__version__='0.7'
 
 # Kivy source release branch to build - latest as of today: 1.9.0
 __kivy_github_version__='master'
@@ -55,28 +55,54 @@ def import_xsysroot():
         import xsysroot
         return xsysroot
 
+def run_tests(kivypie):
+
+    fail_count = 0
+
+    def assert_msg(kivypie, cmd, return_code, msg):
+        failed=0
+        rc=kivypie.execute('{}'.format(cmd), verbose=False)
+        try:
+            assert(rc==return_code)
+            print '{} - PASSED'.format(msg)
+        except:
+            print '{} - FAILED'.format(msg)
+            failed=1
+
+        return failed
+
+    fail_count += assert_msg(kivypie, 'kivy -c "import kivy; print kivy.__version__"', 0, 'kivy installed')
+    fail_count += assert_msg(kivypie, 'which raspi2png', 0, 'raspi2png screnshot tool')
+    fail_count += assert_msg(kivypie, 'which dispman_vncserver', 0, 'kivy vnc server')
+    return fail_count
+
 
 if __name__ == '__main__':
 
     output_image='kivy-pie-{}.img'.format(__version__)
     prepare_only=False
+    test_mode=False
 
     # Xsysroot profile name that holds the original pipaOS image
     # (See the file xsysroot.conf for details)
     xsysroot_profile_name='kivypie'
 
     # --prepare-only will not install any software, but expand the image
+    cmd_options='--build-all, --prepare-only, --test-image'
     if len(sys.argv) > 1:
         if sys.argv[1] == '--prepare-only':
             prepare_only=True
             print 'Running in --prepare-only mode'
         elif sys.argv[1] == '--build-all':
             print 'Running in --build-all mode'
+        elif sys.argv[1] == '--test-image':
+            test_mode=True
+            print 'Running in --test-image mode'
         else:
-            print 'Unrecognized option, use one of --build-all or --prepare-only'
+            print 'Unrecognized option, use one of {}'.format(cmd_options)
             sys.exit(1)
     else:
-        print 'Please specify mode: --build-all or --prepare-only'
+        print 'Please specify mode: {}'.format(cmd_options)
         sys.exit(1)
 
     # import the xsysroot module
@@ -91,6 +117,20 @@ if __name__ == '__main__':
         print 'You need to create a Xsysroot kivypie profile'
         print 'Please see the README file'
         sys.exit(1)
+
+    # test mode to make sure the image was built successfully
+    if test_mode:
+        if not kivypie.is_mounted():
+            if not kivypie.mount():
+                sys.exit(1)
+
+        failed=run_tests(kivypie)
+        if failed:
+            print '{} TESTS FAILED'.format(failed)
+        else:
+            print 'ALL TESTS PASSED'
+
+        sys.exit(failed)
 
     # start timer
     time_start=time.time()
