@@ -105,7 +105,7 @@ echo "uncompressing source code..."
 unzip -o ${kivy_source_zip}.zip
 
 echo "Installing PIP"
-wget -q https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+wget -q https://bootstrap.pypa.io/get-pip.py
 python ./get-pip.py
 rm -fv ./get-pip.py
 

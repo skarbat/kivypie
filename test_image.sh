@@ -3,7 +3,7 @@
 # Test to make sure kivy and extra tools are installed
 #
 
-kivy_version="1.9.1-dev"
+kivy_version="1.9.2-dev0"
 xprofile="kivypie"
 username="sysop"
 
