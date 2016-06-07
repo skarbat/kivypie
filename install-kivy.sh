@@ -45,12 +45,11 @@ fi
 # If no Kivy source release is provided
 # install the latest unstable master branch
 if [ "$1" == "" ]; then
-    # Name of the Kivy source zip package at github
-    # by default: https://github.com/kivy/kivy/archive/master.zip
-    kivy_source_zip='master'
+    kivy_release="master"
 else
-    kivy_source_zip=$1
+    kivy_release="$1"
 fi
+
 
 # List of packages needed to build Kivy and additional tools
 BUILD_PKGS="
@@ -77,6 +76,8 @@ python-rpi.gpio python3-rpi.gpio raspi-gpio wiringpi
 libraspberrypi-dev wget
 libvncserver-dev
 python-beautifulsoup
+python3-bs4
+python3-pip
 "
 
 echo "KivyPie build process starts at: `date`"
@@ -90,40 +91,37 @@ apt-get autoclean
 # Stop services started due to the installation
 /etc/init.d/dbus stop
 
-# Download and uncompress the Kivy sources
-cd /tmp
-kivy_dirname="kivy-${kivy_source_zip}"
-kivy_download_url="https://github.com/kivy/kivy/archive/${kivy_source_zip}.zip"
-if [ -d "$kivy_dirname" ]; then
-    echo "removing previous dir $kivy_dirname"
-    rm -rf $kivy_dirname
-fi
-
-echo "Downloading Kivy sources $kivy_download_url"
-curl -L -k -s $kivy_download_url > ${kivy_source_zip}.zip
-echo "uncompressing source code..."
-unzip -o ${kivy_source_zip}.zip
-
-echo "Installing PIP"
-wget -q https://bootstrap.pypa.io/get-pip.py
-python ./get-pip.py
-rm -fv ./get-pip.py
 
 echo "Build and install Cython"
-pip install cython==0.21.2
+pip3 install cython==0.23
 
 echo "Installing pygments"
-pip install pygments
+pip3 install pygments
 
+
+kivy_url="https://github.com/kivy/kivy/archive/$kivy_release.zip"
+sourcezip=/tmp/kivy_source.zip
 echo "Building Kivy!"
-cd /tmp/$kivy_dirname
-python setup.py install
-cd ..
-rm -rf $kivy_dirname
-ln -s /usr/bin/python2.7 /usr/bin/kivy
+cd /tmp
 
-echo "Installing kivy garden"
-pip install kivy-garden
+# cleanup previos build
+rm -fv $sourcezip
+rm -rfv /tmp/kivi-$kivy_release
+
+# download and unzip sources
+echo ">>> Downloading kivy source code url: $kivy_url"
+curl -s -L $kivy_url > $sourcezip
+unzip -o $sourcezip
+
+# build kivy
+echo ">>> PIP3 building kivy...."
+cd /tmp/kivy-$kivy_release
+pip3 install --upgrade .
+
+
+echo "Setting Kivy to point to Python3"
+ln -sfv /usr/bin/python3 /usr/bin/kivy
+kivy -V
 
 
 # Build screnshot tool

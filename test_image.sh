@@ -34,7 +34,7 @@ else
     echo "$username user - PASS"
 fi
 
-kivy=`xsysroot -p $xprofile -x "kivy -c 'import kivy; print kivy.__version__' 2>/dev/null" | cut -d$'\n' -f1`
+kivy=`xsysroot -p $xprofile -x "kivy -c 'import kivy; print (kivy.__version__)' 2>/dev/null" | cut -d$'\n' -f1`
 if [ "$kivy" != "$kivy_version" ]; then
     echo "kivy version - FAILED"
 else
@@ -69,7 +69,7 @@ else
     echo "python requests - PASS"
 fi
 
-requests=`xsysroot -p $xprofile -x "@$username python -c 'import BeautifulSoup' > /dev/null 2>&1"`
+requests=`xsysroot -p $xprofile -x "@$username python -c 'import bs4' > /dev/null 2>&1"`
 if [ "$?" != "0" ]; then
     echo "python BeautifulSoup - FAILED"
 else
