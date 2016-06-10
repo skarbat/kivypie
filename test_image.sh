@@ -62,18 +62,25 @@ else
     echo "kivy garden - PASS"
 fi
 
-requests=`xsysroot -p $xprofile -x "@$username python -c 'import requests' > /dev/null 2>&1"`
+requests=`xsysroot -p $xprofile -x "@$username python3 -c 'import requests' > /dev/null 2>&1"`
 if [ "$?" != "0" ]; then
     echo "python requests - FAILED"
 else
     echo "python requests - PASS"
 fi
 
-requests=`xsysroot -p $xprofile -x "@$username python -c 'import bs4' > /dev/null 2>&1"`
+bs=`xsysroot -p $xprofile -x "@$username python3 -c 'import bs4' > /dev/null 2>&1"`
 if [ "$?" != "0" ]; then
     echo "python BeautifulSoup - FAILED"
 else
     echo "python BeautifulSoup - PASS"
+fi
+
+pip3=`xsysroot -p $xprofile -x "@$username pip3 -V | grep 'python 3.4'> /dev/null 2>&1"`
+if [ "$?" != "0" ]; then
+    echo "pip3 - FAILED"
+else
+    echo "pip3 - PASS"
 fi
 
 umounted=`xsysroot -p $xprofile -u`

@@ -87,6 +87,7 @@ echo "Bringing the system up to date"
 apt-get update
 apt-get install -y --force-yes $BUILD_PKGS
 apt-get autoclean
+easy_install3 -U pip
 
 # Stop services started due to the installation
 /etc/init.d/dbus stop
