@@ -41,6 +41,9 @@
 # uncomment for composite PAL
 #sdtv_mode=2
 
+# enable sound
+dtparam=audio=on
+
 #uncomment to overclock the arm. 700 MHz is the default.
 #arm_freq=800
 
