@@ -44,4 +44,8 @@ Make sure you do `sudo umount /tmp` to use the full sd card available space to b
 
 The latest version of KivyPie and additional info can be found at http://kivypie.mitako.eu
 
+###Build debian packages
+
+TODO: Explain how to build them
+
 Enjoy!
