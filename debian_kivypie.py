@@ -30,7 +30,7 @@ packages=[
     { 'fileset': [ '/usr/local/lib/python2.7/dist-packages/kivy/*' ],  
       'pkg_name': 'python2-kivypie',
       'pkg_version': build_kivypie.__version__,
-      'pkg_depends': 'python2.7 libsdl2-2.0-0, libsdl2-image-2.0-0, libsdl2-mixer-2.0-0, '\
+      'pkg_depends': 'python2.7, libsdl2-2.0-0, libsdl2-image-2.0-0, libsdl2-mixer-2.0-0, '\
                      'libsdl2-ttf-2.0-0, python-beautifulsoup',
       'pkg_description': 'Python2 Kivy libraries for the RaspberryPI'
     },
@@ -39,7 +39,7 @@ packages=[
     { 'fileset': [ '/usr/local/lib/python3.4/dist-packages/kivy/*' ],  
       'pkg_name': 'python3-kivypie',
       'pkg_version': build_kivypie.__version__,
-      'pkg_depends': 'python3.4 libsdl2-2.0-0, libsdl2-image-2.0-0, libsdl2-mixer-2.0-0, '\
+      'pkg_depends': 'python3.4, libsdl2-2.0-0, libsdl2-image-2.0-0, libsdl2-mixer-2.0-0, '\
                      'libsdl2-ttf-2.0-0, python3-bs4',
       'pkg_description': 'Python3 Kivy libraries for the RaspberryPI'
     },
