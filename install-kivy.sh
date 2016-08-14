@@ -54,10 +54,10 @@ fi
 # List of packages needed to build Kivy and additional tools
 BUILD_PKGS="
 pkg-config libgl1-mesa-dev libgles2-mesa-dev
-python-pygame python-setuptools libgstreamer1.0-dev git-core
+python-pygame python-setuptools python3-setuptools libgstreamer1.0-dev git-core
 gstreamer1.0-plugins-bad gstreamer1.0-plugins-base
 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
-gstreamer1.0-omx gstreamer1.0-alsa python-dev
+gstreamer1.0-omx gstreamer1.0-alsa python-dev python3-dev
 vim vim-python-jedi emacs python-mode mc
 libmtdev1
 libpng12-dev
@@ -77,35 +77,38 @@ libraspberrypi-dev wget
 libvncserver-dev
 python-beautifulsoup
 python3-bs4
-python3-pip
 "
 
-echo "KivyPie build process starts at: `date`"
+echo ">>> KivyPie build process starts at: `date`"
 
 # Bring APT up to date and install dependant software
-echo "Bringing the system up to date"
+echo ">>> Bringing the system up to date"
 apt-get update
 apt-get install -y --force-yes $BUILD_PKGS
 apt-get autoclean
+
+# upgrade to latest PIP for python 2 and 3
+echo ">>> Installing pip and pip3"
 easy_install3 -U pip
+easy_install -U pip
 
 # Stop services started due to the installation
 /etc/init.d/dbus stop
 
-
-echo "Build and install Cython"
+echo ">>> Build and install Cython"
+pip install cython==0.23
 pip3 install cython==0.23
 
-echo "Installing pygments"
+echo ">>> Installing pygments"
+pip install pygments
 pip3 install pygments
 
-
+# get Kivy source code
 kivy_url="https://github.com/kivy/kivy/archive/$kivy_release.zip"
 sourcezip=/tmp/kivy_source.zip
-echo "Building Kivy!"
 cd /tmp
 
-# cleanup previos build
+# cleanup previous build
 rm -fv $sourcezip
 rm -rfv /tmp/kivi-$kivy_release
 
@@ -114,13 +117,21 @@ echo ">>> Downloading kivy source code url: $kivy_url"
 curl -s -L $kivy_url > $sourcezip
 unzip -o $sourcezip
 
-# build kivy
-echo ">>> PIP3 building kivy...."
+# build kivy for python 3
+echo ">>> PIP3 is building kivy for Python 3...."
 cd /tmp/kivy-$kivy_release
 pip3 install --upgrade .
 
+# cleanup previous kivy build for python 3
+rm -rfv /tmp/kivi-$kivy_release
+unzip -o $sourcezip
 
-echo "Setting Kivy to point to Python3"
+# now build kivy for python 2
+echo ">>> PIP is building kivy for Python 2...."
+cd /tmp/kivy-$kivy_release
+pip install --upgrade .
+
+echo ">>> Setting Kivy to point to Python3"
 ln -sfv /usr/bin/python3 /usr/bin/kivy
 kivy -V
 
@@ -147,9 +158,8 @@ rm -rf dispmanx_vnc-master
 curl -L -k https://github.com/hanzelpeter/dispmanx_vnc/archive/master.zip > dispmanx_vnc.zip
 unzip -o dispmanx_vnc.zip
 cd dispmanx_vnc-master
-chmod +x ./makeit
-./makeit
-cp -fv dispman_vncserver /usr/local/bin/
+make
+cp -fv dispmanx_vncserver /usr/local/bin/
 cd /tmp
 rm -rf dispmanx_vnc-master
 rm dispmanx_vnc.zip
@@ -159,7 +169,7 @@ rm dispmanx_vnc.zip
 # System tweaks to make Kivy play well
 #
 username="sysop"
-echo "Setup input device for regular keyboard and mouse"
+echo ">> Setup input device for regular keyboard and mouse"
 usernamedir="/home/$username"
 kivdir=$usernamedir/.kivy
 kivini=$kivdir/config.ini
@@ -177,6 +187,7 @@ touchring = scale=0.3,alpha=0.7,show_cursor=1
 EOF
 
 # Allow kivy apps to be run as root
+echo ">>> configuring Kivy default configurations"
 mkdir -p /root/.kivy
 cp -fv /home/$username/.kivy/config.ini /root/.kivy
 
@@ -190,7 +201,7 @@ echo "import kivy; print kivy.__version__" | python -
 echo "Copying Kivy sources used to build this version"
 cp -fv ${kivy_source_zip}.zip $usernamedir
 
-echo "Get latest kivy documentation in PDF"
+echo ">>> Getting latest kivy documentation in PDF"
 kivypdf=$usernamedir/kivy-documentation.pdf
 wget -q http://kivy.org/docs/pdf/Kivy-latest.pdf -O $kivypdf
 

@@ -13,7 +13,7 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-dispmanx=`xsysroot -p $xprofile -x "which dispman_vncserver"`
+dispmanx=`xsysroot -p $xprofile -x "which dispmanx_vncserver"`
 if [ "$?" != "0" ]; then
     echo "dispman_vncserver - FAILED"
 else
