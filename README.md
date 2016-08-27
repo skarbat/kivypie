@@ -7,7 +7,7 @@ It should be straight forward to use a Raspbian too.
 
 PipaOS is available at http://pipaos.mitako.eu/
 
-The latest features on Kivy 1.9 are [detailed here](http://kivy.org/planet/2015/04/kivy-1-9%C2%A0released/).
+The latest features on Kivy are [detailed here](http://kivy.org/planet/2015/04/kivy-1-9%C2%A0released/).
 
 ### Requirements and preparation
 
@@ -32,10 +32,11 @@ available by running `xsysroot -t`. If it complains, install the suggested packa
 
 ### Building KivyPie
 
-The build process is separated in 2 parts. 
+The build process is separated in 3 stages.
 
  * `build-kivypie.py` is responsible for preparing the OS, install Kivy, and give you a bootable image
  * `install-kivy.sh` The KivyPie build and installation script
+ * `debian_kivypie.py` Extracts Kivy runtime into debian packages for Python 2 and 3.
 
 Execute `build.sh` to build KivyPie from scratch. Follow the progress via the logfile with `tail -f build.log`.
 
@@ -43,5 +44,16 @@ You could actually run `install-kivy.sh` directly on the RaspberryPI and it shou
 Make sure you do `sudo umount /tmp` to use the full sd card available space to build all sources.
 
 The latest version of KivyPie and additional info can be found at http://kivypie.mitako.eu
+
+###Build debian packages
+
+You can regenerate debian packages manually from the host, as below:
+
+```
+$ xsysroot -p kivypie -m
+$ python debian_kivypie.py $(xsysroot -q sysroot)
+```
+
+Packages will be available inside the `pkgs` folder.
 
 Enjoy!
