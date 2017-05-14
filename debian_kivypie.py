@@ -12,6 +12,9 @@ import os
 import sys
 import build_kivypie
 
+# Package version
+deb_version="1.0-1"
+
 # This is Debian control file
 debian_control='''
 Maintainer: Albert Casals <skarbat@gmail.com>
@@ -29,7 +32,7 @@ packages=[
     # Kivypie debian package for Python2
     { 'fileset': [ '/usr/local/lib/python2.7/dist-packages/kivy/*' ],  
       'pkg_name': 'python2-kivypie',
-      'pkg_version': build_kivypie.__version__,
+      'pkg_version': deb_version,
       'pkg_depends': 'python2.7, libsdl2-2.0-0, libsdl2-image-2.0-0, libsdl2-mixer-2.0-0, '\
                      'libsdl2-ttf-2.0-0, python-beautifulsoup',
       'pkg_description': 'Python2 Kivy libraries for the RaspberryPI'
@@ -38,7 +41,7 @@ packages=[
     # Kivypie debian package for Python3
     { 'fileset': [ '/usr/local/lib/python3.4/dist-packages/kivy/*' ],  
       'pkg_name': 'python3-kivypie',
-      'pkg_version': build_kivypie.__version__,
+      'pkg_version': deb_version,
       'pkg_depends': 'python3.4, libsdl2-2.0-0, libsdl2-image-2.0-0, libsdl2-mixer-2.0-0, '\
                      'libsdl2-ttf-2.0-0, python3-bs4',
       'pkg_description': 'Python3 Kivy libraries for the RaspberryPI'
@@ -47,7 +50,7 @@ packages=[
     # Kivypie debian package for official Kivy examples
     { 'fileset': [ '/usr/local/share/kivy-examples/*' ],  
       'pkg_name': 'python-kivypie-examples',
-      'pkg_version': build_kivypie.__version__,
+      'pkg_version': deb_version,
       'pkg_depends': 'python2-kivypie | python3-kivypie',
       'pkg_description': 'Python Kivy examples for the RaspberryPI'
     }
@@ -72,7 +75,7 @@ if __name__ == '__main__':
 
     for pkg in packages:
         # allocate a versioned directory for the package
-        versioned_pkg_name = '{}_{}'.format(pkg['pkg_name'], build_kivypie.__version__)
+        versioned_pkg_name = '{}_{}'.format(pkg['pkg_name'], deb_version)
         pkg_target=os.path.join(pkgsdir, versioned_pkg_name)
         print 'Processing package {}... into {}'.format(versioned_pkg_name, pkg_target)
 
