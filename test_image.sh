@@ -3,7 +3,7 @@
 # Test to make sure kivy and extra tools are installed
 #
 
-kivy_version="1.9.2-dev0"
+kivy_version="1.10.0"
 default_python="python2.7"
 xprofile="kivypie"
 username="sysop"

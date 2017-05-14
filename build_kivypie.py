@@ -36,8 +36,8 @@ import xsysroot
 # Release version of KivyPie
 __version__='1.0'
 
-# Kivy source release branch to build - latest as of today: 1.9.0
-__kivy_github_version__='master'
+# Kivy source release branch to build
+__kivy_github_version__='1.10.0'
 
 
 if __name__ == '__main__':
